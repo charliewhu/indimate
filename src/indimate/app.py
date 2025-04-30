@@ -9,10 +9,7 @@ llm_name = os.getenv("LLM", "llama2")
 
 
 template = """
-    Using your knowledge of physical crude oil trading, 
-    parse structured info from this text: {text}.
-    
-    The structured data should be in the following format:
+    Using your knowledge of physical crude oil trading, parse the folling fields
 
     'Counterparty:
     Grade:
@@ -22,9 +19,12 @@ template = """
     Pricing premium:
     Pricing period:'
 
+    exclusively using information from this text: '{text}'.
+
     The descriptions of the above are:
 
-    Counterparty: which counterparty is buying/selling to us. Use your knowledge of oil trading companies eg chevron, trafigura, bp.
+    Counterparty: parse which counterparty is buying/selling to us in the text. The counterparty is not the same as the grade.
+    Use your knowledge of oil trading companies. If you cannot see the name within the text, leave this empty.
     Grade: which grade of crude oil is being indicated. Use your knowledge of crude oil grades.
     Incoterms: what are the incoterms of the deal.
     Bid or Offer: are they indicating a buy or sell. Usually words like 'bid' or 'offer' indicate this.
@@ -39,6 +39,7 @@ model = OllamaLLM(model=llm_name, base_url=ollama_base_url)
 prompt = ChatPromptTemplate.from_template(template)
 chain = prompt | model  # type: ignore
 
+
 st.header("Read some indics in")
 
 
@@ -47,15 +48,13 @@ query = st.text_input("Add indics")
 
 if query:
     res = chain.stream({"text": query})  # type: ignore
+
     text = ""
 
     if res:
-        st.text(res)
+        st.text(text)
 
         try:
-            while True:
-                text += next(res)
+            st.write_stream(res)
         except StopIteration:
             st.text("finished")
-
-        st.text(text)
