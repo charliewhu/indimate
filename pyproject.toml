@@ -1,0 +1,12 @@
+[project]
+name = "indimate"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "langchain>=0.3.24",
+    "langchain-ollama>=0.3.2",
+    "ollama>=0.4.8",
+    "streamlit>=1.44.1",
+]
